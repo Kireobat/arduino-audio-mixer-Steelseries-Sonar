@@ -1,79 +1,114 @@
-from steelseries_sonar_py import Sonar
-from steelseries_sonar_py.exceptions import EnginePathNotFoundError
+import serial
+from functions.audioControll import increaseVolume, decreaseVolume, mute, unmute, getAllAudioData, getAudioDataForChannel
 
-try:
-    sonar = Sonar(streamer_mode=False, app_data_path="C:\ProgramData\SteelSeries\SteelSeries Engine 3\coreProps.json")
-except EnginePathNotFoundError:
-    print("Engine not found!")
-    quit()
-    
-    
+print('')
+print('------------------------')
+print('Starting server')
+print('------------------------')
+print('')
+
+com = 'COM10'
+baud = 9600
+
+print('Connecting to', com, 'at', baud, 'baud...')
+print('')
+ser = serial.Serial(com, baud)
+
 channels = ['game', 'chatRender', 'chatCapture', 'media', 'aux']
 
 
-def increaseVolume(channel):
-    print('Increasing volume of channel', channel)
-    # Increase volume of channel
-    audioData = getAudioDataForChannel(channel)['classic']
-    
-    if audioData['volume'] >= 1:
-        print('Volume is already at maximum')
-        return
-    
-    sonar.set_volume(channel, audioData['volume'] + 0.01)
 
-    
-    
-def decreaseVolume(channel):
-    print('Decreasing volume of channel', channel)
-    # Decreasing volume of channel
-    
-    audioData = getAudioDataForChannel(channel)['classic']
-    
-    if audioData['volume'] <= 0:
-        print('Volume is already at minimum')
-        return
-    
-    sonar.set_volume(channel, audioData['volume'] - 0.01)
-    
-def mute(channel):
-    print('Muting channel', channel)
-    # Mute channel
-    
-    audioData = getAudioDataForChannel(channel)['classic']
-    
-    if audioData['muted'] == True:
-        print('Channel is already muted')
-        return
-    
-    sonar.mute_channel(channel, True)
-    
-def unmute(channel):
-    print('Unmuting channel', channel)
-    # Unmute channel
-    
-    audioData = getAudioDataForChannel(channel)['classic']
-    
-    if audioData['muted'] == False:
-        print('Channel is already unmuted')
-        return
-    
-    sonar.mute_channel(channel, False)
-    
-def getAllAudioData():
-    print('Checking volume of all channels')
-    # Check volume of channel
-    volumeData = sonar.get_volume_data()
-    
-    return volumeData
-    
-def getAudioDataForChannel(channel):
-    print('Checking volume of channel', channel)
-    # Check volume of channel
-    volumeData = sonar.get_volume_data()
-    
-    return volumeData['devices'][channel]
-
-# increaseVolume('game')
-
-print(getAllAudioData())
+while True:
+    if ser.in_waiting > 0:
+        line = ser.readline().decode('utf-8').strip()
+        print(line)
+        
+        # --------------------------------   
+        # Increase volume of channel
+        # --------------------------------
+        
+        if 'increaseVolume' in line:
+            
+            if 'game' in line:
+                increaseVolume('game')
+            elif 'chatRender' in line:
+                increaseVolume('chatRender')
+            elif 'chatCapture' in line:
+                increaseVolume('chatCapture')
+            elif 'media' in line:
+                increaseVolume('media')
+            elif 'aux' in line:
+                increaseVolume('aux')
+            else:
+                print('Channel not recognized')
+                
+        # --------------------------------   
+        # Decrease volume of channel
+        # --------------------------------
+        
+        elif 'decreaseVolume' in line:
+            
+            if 'game' in line:
+                decreaseVolume('game')
+            elif 'chatRender' in line:
+                decreaseVolume('chatRender')
+            elif 'chatCapture' in line:
+                decreaseVolume('chatCapture')
+            elif 'media' in line:
+                decreaseVolume('media')
+            elif 'aux' in line:
+                decreaseVolume('aux')
+            else:
+                print('Channel not recognized')
+                
+        # --------------------------------   
+        # Mute a channel
+        # --------------------------------
+            
+        elif 'mute' in line:
+            
+            if 'game' in line:
+                mute('game')
+            elif 'chatRender' in line:
+                mute('chatRender')
+            elif 'chatCapture' in line:
+                mute('chatCapture')
+            elif 'media' in line:
+                mute('media')
+            elif 'aux' in line:
+                mute('aux')
+            else:
+                print('Channel not recognized')
+            
+        # --------------------------------   
+        # Unmute a channel
+        # --------------------------------
+        
+        elif 'unmute' in line:
+            
+            if 'game' in line:
+                unmute('game')
+            elif 'chatRender' in line:
+                unmute('chatRender')
+            elif 'chatCapture' in line:
+                unmute('chatCapture')
+            elif 'media' in line:
+                unmute('media')
+            elif 'aux' in line:
+                unmute('aux')
+            else:
+                print('Channel not recognized')
+                
+        # --------------------------------   
+        # Gets and exit + unrecognized commands
+        # --------------------------------
+                
+        elif 'getAllAudioData' in line:
+            print(getAllAudioData())
+        elif 'getAudioDataForChannel' in line:
+            print(getAudioDataForChannel('game'))
+        elif 'exit' in line:
+            break
+        else:
+            print('Command not recognized')
+            
