@@ -7,7 +7,7 @@ print('Starting server')
 print('------------------------')
 print('')
 
-com = 'COM10'
+com = 'COM9'
 baud = 9600
 
 print('Connecting to', com, 'at', baud, 'baud...')
