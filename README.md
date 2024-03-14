@@ -5,9 +5,13 @@ This is supposed to be a program that will let an arduino send data to your comp
 ### links:
 
 https://www.youtube.com/watch?v=UeybhVFqoeg
+
 https://realpython.com/arduino-python/
+
 https://diyodemag.com/projects/diy_mini_pc_audio_mixer_arduino_nano
+
 https://github.com/Mark7888/steelseries-sonar-py
+
 https://www.reddit.com/r/steelseries/comments/5ght5v/where_the_heck_is_corepropsjson/
 
 ### parts list:
